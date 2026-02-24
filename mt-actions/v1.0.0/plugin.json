@@ -1,0 +1,462 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://schemas.maus-tec.com/mt-actions/v1.0.0/plugin.json",
+    "title": "MT-Actions Plugin",
+    "description": "JSON-based scripting language for embedded device drivers and plugins",
+    "type": "object",
+    "required": ["displayName"],
+    "properties": {
+        "displayName": {
+            "type": "string",
+            "description": "Human-readable name for the plugin"
+        },
+        "match": {
+            "$ref": "#/$defs/match",
+            "description": "Maus-Bus device matching criteria"
+        },
+        "variables": {
+            "$ref": "#/$defs/variables",
+            "description": "Global plugin variables"
+        },
+        "functions": {
+            "type": "object",
+            "description": "Named functions that can be called from events or other functions",
+            "additionalProperties": {
+                "$ref": "#/$defs/functionDef"
+            }
+        },
+        "events": {
+            "type": "object",
+            "description": "Event handlers triggered by the host system",
+            "additionalProperties": {
+                "$ref": "#/$defs/functionDef"
+            }
+        }
+    },
+    "$defs": {
+        "match": {
+            "type": "object",
+            "description": "Maus-Bus device matching criteria",
+            "properties": {
+                "vid": {
+                    "type": "integer",
+                    "description": "Maus-Bus Vendor ID"
+                },
+                "pid": {
+                    "type": "integer",
+                    "description": "Maus-Bus Product ID"
+                },
+                "serial": {
+                    "type": ["integer", "null"],
+                    "description": "Device Serial Number (optional)"
+                }
+            }
+        },
+        "variables": {
+            "type": "object",
+            "description": "Variable declarations with initial values",
+            "additionalProperties": {
+                "anyOf": [
+                    { "type": "number" },
+                    { "type": "string" },
+                    { "type": "array", "items": { "type": "integer" } }
+                ]
+            },
+            "propertyNames": {
+                "description": "Variable names. Use 'name[size]' syntax for arrays (e.g., 'buffer[100]')"
+            }
+        },
+        "functionDef": {
+            "description": "Function definition - either a simple action list or a full definition with local vars",
+            "anyOf": [
+                { "$ref": "#/$defs/actionList" },
+                { "$ref": "#/$defs/functionDefObject" }
+            ]
+        },
+        "functionDefObject": {
+            "type": "object",
+            "description": "Full function definition with optional vars, actions, comment",
+            "properties": {
+                "comment": {
+                    "type": "string",
+                    "description": "Documentation string for the function"
+                },
+                "vars": {
+                    "$ref": "#/$defs/variables",
+                    "description": "Local variables scoped to this function"
+                },
+                "actions": {
+                    "$ref": "#/$defs/actionList",
+                    "description": "Actions to execute"
+                },
+                "system": {
+                    "type": "string",
+                    "description": "System function binding (for driver functions)"
+                },
+                "if": {
+                    "$ref": "#/$defs/conditional",
+                    "description": "Shorthand: function as a single if statement"
+                }
+            }
+        },
+        "actionList": {
+            "type": "array",
+            "description": "List of actions to execute sequentially",
+            "items": { "$ref": "#/$defs/action" }
+        },
+        "action": {
+            "description": "A single action to execute",
+            "anyOf": [
+                { "$ref": "#/$defs/functionCallString" },
+                { "$ref": "#/$defs/setAction" },
+                { "$ref": "#/$defs/returnAction" },
+                { "$ref": "#/$defs/incAction" },
+                { "$ref": "#/$defs/decAction" },
+                { "$ref": "#/$defs/addAction" },
+                { "$ref": "#/$defs/subAction" },
+                { "$ref": "#/$defs/mulAction" },
+                { "$ref": "#/$defs/divAction" },
+                { "$ref": "#/$defs/eqAction" },
+                { "$ref": "#/$defs/neqAction" },
+                { "$ref": "#/$defs/ltAction" },
+                { "$ref": "#/$defs/gtAction" },
+                { "$ref": "#/$defs/lteAction" },
+                { "$ref": "#/$defs/gteAction" },
+                { "$ref": "#/$defs/strcmpAction" },
+                { "$ref": "#/$defs/strlenAction" },
+                { "$ref": "#/$defs/charatAction" },
+                { "$ref": "#/$defs/getbyteAction" },
+                { "$ref": "#/$defs/setbyteAction" },
+                { "$ref": "#/$defs/conditionalAction" },
+                { "$ref": "#/$defs/loopAction" },
+                { "$ref": "#/$defs/delayAction" },
+                { "$ref": "#/$defs/functionCallObject" }
+            ]
+        },
+        "value": {
+            "description": "A value: literal, variable reference ($name), or special variable ($_/$!)",
+            "anyOf": [
+                { "type": "number" },
+                { "type": "string" }
+            ]
+        },
+        "variableRef": {
+            "type": "string",
+            "pattern": "^\\$",
+            "description": "Variable reference starting with $ (e.g., $counter, $_, $!)"
+        },
+        "functionCallString": {
+            "type": "string",
+            "description": "Simple function call without arguments (host.*, @internal, or plugin-defined)",
+            "examples": ["host.log", "@interpret", "myFunction", "return"]
+        },
+        "functionCallObject": {
+            "type": "object",
+            "description": "Function call with arguments and optional output",
+            "properties": {
+                "to": {
+                    "$ref": "#/$defs/variableRef",
+                    "description": "Variable to store the return value"
+                }
+            },
+            "additionalProperties": true
+        },
+        "setAction": {
+            "type": "object",
+            "description": "Set one or more variables",
+            "properties": {
+                "set": {
+                    "type": "object",
+                    "description": "Variable assignments: { \"varName\": value, ... }",
+                    "additionalProperties": { "$ref": "#/$defs/value" }
+                }
+            },
+            "required": ["set"],
+            "examples": [
+                { "set": { "counter": 0 } },
+                { "set": { "x": 1, "y": 2, "name": "test" } }
+            ]
+        },
+        "returnAction": {
+            "type": "object",
+            "description": "Set $_ and return from function",
+            "properties": {
+                "return": { "$ref": "#/$defs/value" }
+            },
+            "required": ["return"],
+            "examples": [
+                { "return": 1 },
+                { "return": "$result" }
+            ]
+        },
+        "incAction": {
+            "type": "object",
+            "description": "Increment a variable by 1",
+            "properties": {
+                "inc": { "$ref": "#/$defs/variableRef" }
+            },
+            "required": ["inc"]
+        },
+        "decAction": {
+            "type": "object",
+            "description": "Decrement a variable by 1",
+            "properties": {
+                "dec": { "$ref": "#/$defs/variableRef" }
+            },
+            "required": ["dec"]
+        },
+        "twoArgArray": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/value" },
+            "minItems": 2,
+            "maxItems": 2
+        },
+        "addAction": {
+            "type": "object",
+            "description": "Add: first operand += second operand (in-place)",
+            "properties": {
+                "add": { "$ref": "#/$defs/twoArgArray" },
+                "to": { "$ref": "#/$defs/variableRef" }
+            },
+            "required": ["add"]
+        },
+        "subAction": {
+            "type": "object",
+            "description": "Subtract: first operand -= second operand (in-place)",
+            "properties": {
+                "sub": { "$ref": "#/$defs/twoArgArray" },
+                "to": { "$ref": "#/$defs/variableRef" }
+            },
+            "required": ["sub"]
+        },
+        "mulAction": {
+            "type": "object",
+            "description": "Multiply: first operand *= second operand (in-place)",
+            "properties": {
+                "mul": { "$ref": "#/$defs/twoArgArray" },
+                "to": { "$ref": "#/$defs/variableRef" }
+            },
+            "required": ["mul"]
+        },
+        "divAction": {
+            "type": "object",
+            "description": "Divide: first operand /= second operand (in-place)",
+            "properties": {
+                "div": { "$ref": "#/$defs/twoArgArray" },
+                "to": { "$ref": "#/$defs/variableRef" }
+            },
+            "required": ["div"]
+        },
+        "eqAction": {
+            "type": "object",
+            "description": "Equal comparison, returns 1 or 0 to $_",
+            "properties": {
+                "eq": { "$ref": "#/$defs/twoArgArray" }
+            },
+            "required": ["eq"]
+        },
+        "neqAction": {
+            "type": "object",
+            "description": "Not equal comparison, returns 1 or 0 to $_",
+            "properties": {
+                "neq": { "$ref": "#/$defs/twoArgArray" }
+            },
+            "required": ["neq"]
+        },
+        "ltAction": {
+            "type": "object",
+            "description": "Less than comparison, returns 1 or 0 to $_",
+            "properties": {
+                "lt": { "$ref": "#/$defs/twoArgArray" }
+            },
+            "required": ["lt"]
+        },
+        "gtAction": {
+            "type": "object",
+            "description": "Greater than comparison, returns 1 or 0 to $_",
+            "properties": {
+                "gt": { "$ref": "#/$defs/twoArgArray" }
+            },
+            "required": ["gt"]
+        },
+        "lteAction": {
+            "type": "object",
+            "description": "Less than or equal comparison, returns 1 or 0 to $_",
+            "properties": {
+                "lte": { "$ref": "#/$defs/twoArgArray" }
+            },
+            "required": ["lte"]
+        },
+        "gteAction": {
+            "type": "object",
+            "description": "Greater than or equal comparison, returns 1 or 0 to $_",
+            "properties": {
+                "gte": { "$ref": "#/$defs/twoArgArray" }
+            },
+            "required": ["gte"]
+        },
+        "strcmpAction": {
+            "type": "object",
+            "description": "String comparison (returns 0 if equal, like C strcmp)",
+            "properties": {
+                "strcmp": { "$ref": "#/$defs/twoArgArray" }
+            },
+            "required": ["strcmp"]
+        },
+        "strlenAction": {
+            "type": "object",
+            "description": "Get string length, result to $_ or 'to' variable",
+            "properties": {
+                "strlen": { "$ref": "#/$defs/value" },
+                "to": { "$ref": "#/$defs/variableRef" }
+            },
+            "required": ["strlen"]
+        },
+        "charatAction": {
+            "type": "object",
+            "description": "Get character at index: [string, index], result to $_ or 'to' variable",
+            "properties": {
+                "charat": { "$ref": "#/$defs/twoArgArray" },
+                "to": { "$ref": "#/$defs/variableRef" }
+            },
+            "required": ["charat"]
+        },
+        "getbyteAction": {
+            "type": "object",
+            "description": "Read byte from array: [array, index], result to $_ or 'to' variable",
+            "properties": {
+                "getbyte": { "$ref": "#/$defs/twoArgArray" },
+                "to": { "$ref": "#/$defs/variableRef" }
+            },
+            "required": ["getbyte"]
+        },
+        "setbyteAction": {
+            "type": "object",
+            "description": "Write byte to array: [array, index, value]. Returns value written to $_",
+            "properties": {
+                "setbyte": {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/value" },
+                    "minItems": 3,
+                    "maxItems": 3
+                }
+            },
+            "required": ["setbyte"]
+        },
+        "condition": {
+            "description": "A condition for if/while - comparison, function call, or combinator",
+            "anyOf": [
+                { "$ref": "#/$defs/eqAction" },
+                { "$ref": "#/$defs/neqAction" },
+                { "$ref": "#/$defs/ltAction" },
+                { "$ref": "#/$defs/gtAction" },
+                { "$ref": "#/$defs/lteAction" },
+                { "$ref": "#/$defs/gteAction" },
+                { "$ref": "#/$defs/functionCallString" },
+                { "$ref": "#/$defs/functionCallObject" },
+                { "$ref": "#/$defs/allCondition" },
+                { "$ref": "#/$defs/anyCondition" },
+                { "$ref": "#/$defs/noneCondition" }
+            ]
+        },
+        "allCondition": {
+            "type": "object",
+            "properties": {
+                "all": {
+                    "type": "array",
+                    "description": "AND: all conditions must be truthy",
+                    "items": { "$ref": "#/$defs/condition" }
+                }
+            },
+            "required": ["all"]
+        },
+        "anyCondition": {
+            "type": "object",
+            "properties": {
+                "any": {
+                    "type": "array",
+                    "description": "OR: at least one condition must be truthy",
+                    "items": { "$ref": "#/$defs/condition" }
+                }
+            },
+            "required": ["any"]
+        },
+        "noneCondition": {
+            "type": "object",
+            "properties": {
+                "none": {
+                    "type": "array",
+                    "description": "NOR: no condition may be truthy",
+                    "items": { "$ref": "#/$defs/condition" }
+                }
+            },
+            "required": ["none"]
+        },
+        "conditional": {
+            "type": "object",
+            "description": "Conditional block with condition + then/else branches",
+            "properties": {
+                "eq": { "$ref": "#/$defs/twoArgArray" },
+                "neq": { "$ref": "#/$defs/twoArgArray" },
+                "lt": { "$ref": "#/$defs/twoArgArray" },
+                "gt": { "$ref": "#/$defs/twoArgArray" },
+                "lte": { "$ref": "#/$defs/twoArgArray" },
+                "gte": { "$ref": "#/$defs/twoArgArray" },
+                "all": {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/condition" }
+                },
+                "any": {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/condition" }
+                },
+                "none": {
+                    "type": "array",
+                    "items": { "$ref": "#/$defs/condition" }
+                },
+                "then": {
+                    "$ref": "#/$defs/actionList",
+                    "description": "Actions to execute if condition is truthy"
+                },
+                "else": {
+                    "$ref": "#/$defs/actionList",
+                    "description": "Actions to execute if condition is falsy"
+                }
+            },
+            "required": ["then"]
+        },
+        "conditionalAction": {
+            "type": "object",
+            "description": "If statement",
+            "properties": {
+                "if": { "$ref": "#/$defs/conditional" }
+            },
+            "required": ["if"]
+        },
+        "loopAction": {
+            "type": "object",
+            "description": "While loop",
+            "properties": {
+                "while": { "$ref": "#/$defs/conditional" }
+            },
+            "required": ["while"]
+        },
+        "delayAction": {
+            "type": "object",
+            "description": "Delay execution",
+            "properties": {
+                "delay": {
+                    "type": "object",
+                    "properties": {
+                        "ms": {
+                            "type": "integer",
+                            "description": "Milliseconds to delay"
+                        }
+                    },
+                    "required": ["ms"]
+                }
+            },
+            "required": ["delay"]
+        }
+    }
+}
