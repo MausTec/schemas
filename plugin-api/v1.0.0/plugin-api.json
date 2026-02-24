@@ -4,7 +4,7 @@
     "title": "EOM Plugin API Descriptor",
     "description": "Describes the host functions and events available to JSON plugins at a given firmware version. Firmware CI emits the generated core (name + permission only); the SDK overlay adds descriptions, argument types, and event payloads. Both files validate against this schema.",
     "type": "object",
-    "required": ["product", "version", "functions", "events"],
+    "required": [ "product", "version", "functions", "events" ],
     "properties": {
         "$schema": {
             "type": "string"
@@ -12,13 +12,13 @@
         "product": {
             "type": "string",
             "description": "Product identifier slug (e.g. 'edge-o-matic-3000')",
-            "examples": ["edge-o-matic-3000", "mercury-1000"]
+            "examples": [ "edge-o-matic-3000", "mercury-1000" ]
         },
         "version": {
             "type": "string",
             "description": "Firmware version this descriptor was generated from, in semver format",
             "pattern": "^\\d+\\.\\d+\\.\\d+",
-            "examples": ["1.3.0", "2.0.0"]
+            "examples": [ "1.3.0", "2.0.0" ]
         },
         "functions": {
             "type": "array",
@@ -45,19 +45,19 @@
                     "type": "string",
                     "pattern": "^[a-z][a-z0-9_]*:[a-z][a-z0-9_]*$",
                     "description": "Permission string in 'resource:action' format (e.g. 'ble:write', 'syscfg:read')",
-                    "examples": ["ble:write", "syscfg:read", "syscfg:write", "arousal:read"]
+                    "examples": [ "ble:write", "syscfg:read", "syscfg:write", "arousal:read" ]
                 }
             ]
         },
         "valueType": {
             "type": "string",
             "description": "Primitive value type as exposed by the mt-actions scripting engine",
-            "enum": ["int", "float", "string", "bool", "bytes"]
+            "enum": [ "int", "float", "string", "bool", "bytes" ]
         },
         "argDef": {
             "type": "object",
             "description": "A single argument to a host function",
-            "required": ["name", "type"],
+            "required": [ "name", "type" ],
             "properties": {
                 "name": {
                     "type": "string",
@@ -82,7 +82,7 @@
         "payloadFieldDef": {
             "type": "object",
             "description": "A single field in an event payload",
-            "required": ["name", "type"],
+            "required": [ "name", "type" ],
             "properties": {
                 "name": {
                     "type": "string",
@@ -102,7 +102,7 @@
         "functionEntry": {
             "type": "object",
             "description": "A host function entry. The generated core carries 'name' and 'permission' only; the SDK overlay adds 'description', 'args', and 'returns'.",
-            "required": ["name", "permission"],
+            "required": [ "name", "permission" ],
             "properties": {
                 "name": {
                     "type": "string",
@@ -112,7 +112,7 @@
                     "$ref": "#/$defs/permission"
                 },
                 "description": {
-                    "type": ["string", "null"],
+                    "type": [ "string", "null" ],
                     "description": "Human-readable description of what the function does (overlay field)"
                 },
                 "args": {
@@ -138,7 +138,7 @@
         "eventEntry": {
             "type": "object",
             "description": "An event entry. The generated core carries 'name' and 'permission' only; the SDK overlay adds 'description' and 'payload'.",
-            "required": ["name", "permission"],
+            "required": [ "name", "permission" ],
             "properties": {
                 "name": {
                     "type": "string",
@@ -148,7 +148,7 @@
                     "$ref": "#/$defs/permission"
                 },
                 "description": {
-                    "type": ["string", "null"],
+                    "type": [ "string", "null" ],
                     "description": "Human-readable description of when the event fires (overlay field)"
                 },
                 "payload": {

@@ -2,14 +2,69 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "$id": "https://schemas.maus-tec.com/mt-actions/v1.0.0/plugin.json",
     "title": "MT-Actions Plugin",
-    "description": "JSON-based scripting language for embedded device drivers and plugins",
+    "description": "JSON-based scripting language for embedded device drivers and plugins. Hub metadata fields (name, version, author, etc.) are optional for device-side validation but required for Hub distribution.",
     "type": "object",
-    "required": [ "displayName" ],
+    "required": [ "displayName", "type" ],
     "properties": {
+        "$schema": {
+            "type": "string",
+            "description": "JSON Schema URI for editor validation"
+        },
+
+        "name": {
+            "type": "string",
+            "description": "Unique package identifier (lowercase, hyphens). Used as the Hub slug.",
+            "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "version": {
+            "type": "string",
+            "description": "Plugin version in semver format.",
+            "pattern": "^\\d+\\.\\d+\\.\\d+"
+        },
+        "sdkVersion": {
+            "type": "string",
+            "description": "Minimum eom-sdk version required.",
+            "pattern": "^\\d+\\.\\d+\\.\\d+"
+        },
         "displayName": {
             "type": "string",
-            "description": "Human-readable name for the plugin"
+            "description": "Human-readable name for menus and Hub listing"
         },
+        "description": {
+            "type": "string",
+            "description": "Short description for Hub listing"
+        },
+        "author": {
+            "type": "string",
+            "description": "Author name or organization"
+        },
+        "license": {
+            "type": "string",
+            "description": "SPDX license identifier (e.g. MIT)"
+        },
+        "repository": {
+            "type": "string",
+            "format": "uri",
+            "description": "Public source repository URL — required for Hub distribution"
+        },
+        "signature": {
+            "type": "string",
+            "description": "Base64-encoded signature produced by 'eom-sdk sign'"
+        },
+
+        "type": {
+            "$ref": "https://schemas.maus-tec.com/package/v1.0.0/common.json#/$defs/artifactType",
+            "description": "Plugin type: feature or ble_driver"
+        },
+        "permissions": {
+            "$ref": "https://schemas.maus-tec.com/package/v1.0.0/common.json#/$defs/permissionList",
+            "description": "Required host API permissions"
+        },
+        "config": {
+            "$ref": "https://schemas.maus-tec.com/package/v1.0.0/common.json#/$defs/configSchema",
+            "description": "User-adjustable config schema"
+        },
+
         "match": {
             "$ref": "#/$defs/match",
             "description": "Maus-Bus device matching criteria"
@@ -36,7 +91,7 @@
     "$defs": {
         "match": {
             "type": "object",
-            "description": "Maus-Bus device matching criteria",
+            "description": "Device matching criteria (Maus-Bus or BLE)",
             "properties": {
                 "vid": {
                     "type": "integer",
@@ -49,6 +104,14 @@
                 "serial": {
                     "type": [ "integer", "null" ],
                     "description": "Device Serial Number (optional)"
+                },
+                "bleNamePrefix": {
+                    "type": "string",
+                    "description": "BLE advertised name prefix (e.g. 'LVS-')"
+                },
+                "bleName": {
+                    "type": "string",
+                    "description": "Exact BLE advertised name"
                 }
             }
         },
