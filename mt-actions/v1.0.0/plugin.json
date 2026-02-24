@@ -4,7 +4,7 @@
     "title": "MT-Actions Plugin",
     "description": "JSON-based scripting language for embedded device drivers and plugins",
     "type": "object",
-    "required": ["displayName"],
+    "required": [ "displayName" ],
     "properties": {
         "displayName": {
             "type": "string",
@@ -47,7 +47,7 @@
                     "description": "Maus-Bus Product ID"
                 },
                 "serial": {
-                    "type": ["integer", "null"],
+                    "type": [ "integer", "null" ],
                     "description": "Device Serial Number (optional)"
                 }
             }
@@ -148,7 +148,7 @@
         "functionCallString": {
             "type": "string",
             "description": "Simple function call without arguments (host.*, @internal, or plugin-defined)",
-            "examples": ["host.log", "@interpret", "myFunction", "return"]
+            "examples": [ "host.log", "@interpret", "myFunction", "return" ]
         },
         "functionCallObject": {
             "type": "object",
@@ -171,7 +171,7 @@
                     "additionalProperties": { "$ref": "#/$defs/value" }
                 }
             },
-            "required": ["set"],
+            "required": [ "set" ],
             "examples": [
                 { "set": { "counter": 0 } },
                 { "set": { "x": 1, "y": 2, "name": "test" } }
@@ -183,7 +183,7 @@
             "properties": {
                 "return": { "$ref": "#/$defs/value" }
             },
-            "required": ["return"],
+            "required": [ "return" ],
             "examples": [
                 { "return": 1 },
                 { "return": "$result" }
@@ -195,7 +195,7 @@
             "properties": {
                 "inc": { "$ref": "#/$defs/variableRef" }
             },
-            "required": ["inc"]
+            "required": [ "inc" ]
         },
         "decAction": {
             "type": "object",
@@ -203,7 +203,7 @@
             "properties": {
                 "dec": { "$ref": "#/$defs/variableRef" }
             },
-            "required": ["dec"]
+            "required": [ "dec" ]
         },
         "twoArgArray": {
             "type": "array",
@@ -218,7 +218,7 @@
                 "add": { "$ref": "#/$defs/twoArgArray" },
                 "to": { "$ref": "#/$defs/variableRef" }
             },
-            "required": ["add"]
+            "required": [ "add" ]
         },
         "subAction": {
             "type": "object",
@@ -227,7 +227,7 @@
                 "sub": { "$ref": "#/$defs/twoArgArray" },
                 "to": { "$ref": "#/$defs/variableRef" }
             },
-            "required": ["sub"]
+            "required": [ "sub" ]
         },
         "mulAction": {
             "type": "object",
@@ -236,7 +236,7 @@
                 "mul": { "$ref": "#/$defs/twoArgArray" },
                 "to": { "$ref": "#/$defs/variableRef" }
             },
-            "required": ["mul"]
+            "required": [ "mul" ]
         },
         "divAction": {
             "type": "object",
@@ -245,7 +245,7 @@
                 "div": { "$ref": "#/$defs/twoArgArray" },
                 "to": { "$ref": "#/$defs/variableRef" }
             },
-            "required": ["div"]
+            "required": [ "div" ]
         },
         "eqAction": {
             "type": "object",
@@ -253,7 +253,7 @@
             "properties": {
                 "eq": { "$ref": "#/$defs/twoArgArray" }
             },
-            "required": ["eq"]
+            "required": [ "eq" ]
         },
         "neqAction": {
             "type": "object",
@@ -261,7 +261,7 @@
             "properties": {
                 "neq": { "$ref": "#/$defs/twoArgArray" }
             },
-            "required": ["neq"]
+            "required": [ "neq" ]
         },
         "ltAction": {
             "type": "object",
@@ -269,7 +269,7 @@
             "properties": {
                 "lt": { "$ref": "#/$defs/twoArgArray" }
             },
-            "required": ["lt"]
+            "required": [ "lt" ]
         },
         "gtAction": {
             "type": "object",
@@ -277,7 +277,7 @@
             "properties": {
                 "gt": { "$ref": "#/$defs/twoArgArray" }
             },
-            "required": ["gt"]
+            "required": [ "gt" ]
         },
         "lteAction": {
             "type": "object",
@@ -285,7 +285,7 @@
             "properties": {
                 "lte": { "$ref": "#/$defs/twoArgArray" }
             },
-            "required": ["lte"]
+            "required": [ "lte" ]
         },
         "gteAction": {
             "type": "object",
@@ -293,7 +293,7 @@
             "properties": {
                 "gte": { "$ref": "#/$defs/twoArgArray" }
             },
-            "required": ["gte"]
+            "required": [ "gte" ]
         },
         "strcmpAction": {
             "type": "object",
@@ -301,7 +301,7 @@
             "properties": {
                 "strcmp": { "$ref": "#/$defs/twoArgArray" }
             },
-            "required": ["strcmp"]
+            "required": [ "strcmp" ]
         },
         "strlenAction": {
             "type": "object",
@@ -310,7 +310,7 @@
                 "strlen": { "$ref": "#/$defs/value" },
                 "to": { "$ref": "#/$defs/variableRef" }
             },
-            "required": ["strlen"]
+            "required": [ "strlen" ]
         },
         "charatAction": {
             "type": "object",
@@ -319,7 +319,7 @@
                 "charat": { "$ref": "#/$defs/twoArgArray" },
                 "to": { "$ref": "#/$defs/variableRef" }
             },
-            "required": ["charat"]
+            "required": [ "charat" ]
         },
         "getbyteAction": {
             "type": "object",
@@ -328,7 +328,7 @@
                 "getbyte": { "$ref": "#/$defs/twoArgArray" },
                 "to": { "$ref": "#/$defs/variableRef" }
             },
-            "required": ["getbyte"]
+            "required": [ "getbyte" ]
         },
         "setbyteAction": {
             "type": "object",
@@ -341,7 +341,7 @@
                     "maxItems": 3
                 }
             },
-            "required": ["setbyte"]
+            "required": [ "setbyte" ]
         },
         "condition": {
             "description": "A condition for if/while - comparison, function call, or combinator",
@@ -368,7 +368,7 @@
                     "items": { "$ref": "#/$defs/condition" }
                 }
             },
-            "required": ["all"]
+            "required": [ "all" ]
         },
         "anyCondition": {
             "type": "object",
@@ -379,7 +379,7 @@
                     "items": { "$ref": "#/$defs/condition" }
                 }
             },
-            "required": ["any"]
+            "required": [ "any" ]
         },
         "noneCondition": {
             "type": "object",
@@ -390,7 +390,7 @@
                     "items": { "$ref": "#/$defs/condition" }
                 }
             },
-            "required": ["none"]
+            "required": [ "none" ]
         },
         "conditional": {
             "type": "object",
@@ -423,7 +423,7 @@
                     "description": "Actions to execute if condition is falsy"
                 }
             },
-            "required": ["then"]
+            "required": [ "then" ]
         },
         "conditionalAction": {
             "type": "object",
@@ -431,7 +431,7 @@
             "properties": {
                 "if": { "$ref": "#/$defs/conditional" }
             },
-            "required": ["if"]
+            "required": [ "if" ]
         },
         "loopAction": {
             "type": "object",
@@ -439,7 +439,7 @@
             "properties": {
                 "while": { "$ref": "#/$defs/conditional" }
             },
-            "required": ["while"]
+            "required": [ "while" ]
         },
         "delayAction": {
             "type": "object",
@@ -453,10 +453,10 @@
                             "description": "Milliseconds to delay"
                         }
                     },
-                    "required": ["ms"]
+                    "required": [ "ms" ]
                 }
             },
-            "required": ["delay"]
+            "required": [ "delay" ]
         }
     }
 }
