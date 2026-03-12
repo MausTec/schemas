@@ -1,0 +1,191 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://schemas.maus-tec.com/language-pack/v1/language-pack.json",
+    "title": "Maus-Tec Language Pack",
+    "description": "A language pack plugin for use with mt-i18n. Contains plugin metadata and a key-value translation dictionary keyed on symbolic i18n keys. Consumed by device firmware and validated by MausHub on upload.",
+    "type": "object",
+    "required": [
+        "$schema",
+        "name",
+        "version",
+        "displayName",
+        "type",
+        "language",
+        "code",
+        "schema_version",
+        "keys"
+    ],
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string",
+            "description": "Unique slug identifier for the language pack plugin. Used as a stable ID across versions.",
+            "pattern": "^[a-z][a-z0-9-]*$",
+            "examples": [
+                "lang-es",
+                "lang-de",
+                "lang-fr-ca",
+                "lang-pt-br"
+            ]
+        },
+        "version": {
+            "type": "string",
+            "description": "Language pack version in semver format.",
+            "pattern": "^\\d+\\.\\d+\\.\\d+",
+            "examples": [
+                "1.0.0",
+                "1.2.3"
+            ]
+        },
+        "displayName": {
+            "type": "string",
+            "description": "Human-readable pack name shown in the device UI and on MausHub.",
+            "examples": [
+                "Español",
+                "Deutsch",
+                "Français (Canada)"
+            ]
+        },
+        "description": {
+            "type": "string",
+            "description": "Optional short description of the pack, shown on MausHub."
+        },
+        "author": {
+            "type": "string",
+            "description": "Pack author name or organization."
+        },
+        "license": {
+            "type": "string",
+            "description": "SPDX license identifier.",
+            "examples": [
+                "MIT",
+                "CC-BY-4.0",
+                "CC0-1.0"
+            ]
+        },
+        "repository": {
+            "type": "string",
+            "description": "URL to the source repository or contribution page.",
+            "format": "uri"
+        },
+        "type": {
+            "type": "string",
+            "const": "language",
+            "description": "Plugin type discriminator. Must be 'language' for all language packs."
+        },
+        "language": {
+            "type": "string",
+            "description": "Full human-readable name of the language, written in that language.",
+            "examples": [
+                "Español",
+                "Deutsch",
+                "Français",
+                "日本語",
+                "Português (Brasil)"
+            ]
+        },
+        "code": {
+            "type": "string",
+            "description": "IETF BCP 47 language tag.",
+            "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$",
+            "examples": [
+                "es",
+                "de",
+                "fr",
+                "fr-CA",
+                "pt-BR",
+                "zh-Hant",
+                "ja"
+            ]
+        },
+        "schema_version": {
+            "type": "integer",
+            "description": "Version of the firmware i18n key catalog this pack was authored against. Used by MausHub to compute translation completeness and to detect stale packs. Must match the schema_version in the firmware's emitted i18n-catalog.json build artifact.",
+            "minimum": 1,
+            "examples": [
+                1
+            ]
+        },
+        "fw_compat": {
+            "type": "object",
+            "description": "Advisory firmware compatibility range. Not a hard install gate — missing or mismatched keys fall back to English at runtime. Used by Hub for informational display only.",
+            "required": [
+                "product"
+            ],
+            "properties": {
+                "product": {
+                    "type": "string",
+                    "description": "Product slug this pack targets.",
+                    "examples": [
+                        "edge-o-matic-3000",
+                        "mercury-1000"
+                    ]
+                },
+                "min": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "pattern": "^\\d+\\.\\d+\\.\\d+"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Minimum firmware version this pack was tested with. Null means no lower bound.",
+                    "examples": [
+                        "1.3.0",
+                        null
+                    ]
+                },
+                "max": {
+                    "oneOf": [
+                        {
+                            "type": "string",
+                            "pattern": "^\\d+\\.\\d+\\.\\d+"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "description": "Maximum firmware version this pack is known to work with. Null means no upper bound.",
+                    "examples": [
+                        "2.0.0",
+                        null
+                    ]
+                }
+            },
+            "additionalProperties": false
+        },
+        "keys": {
+            "type": "object",
+            "description": "Translation dictionary. Each property name is a dot-namespaced symbolic key (e.g. 'ui.back', 'toast.saved'); the value is the translated string in the target language. An empty string value ('') means 'use the English fallback for this key'. Format string specifiers (%s, %d, etc.) must be preserved exactly as they appear in the firmware's fallback string.",
+            "additionalProperties": {
+                "type": "string"
+            },
+            "examples": [
+                {
+                    "ui.back": "ATRÁS",
+                    "ui.enter": "INGRESAR",
+                    "ui.save": "GUARDAR",
+                    "ui.stop": "DETENER",
+                    "ui.auto": "AUTO",
+                    "ui.manual": "Manual",
+                    "toast.saved": "Guardado",
+                    "toast.denied": "Denegado",
+                    "menu.edging_settings": "Conf de Bordes",
+                    "status.chart": "CUADRO",
+                    "status.pres_fmt": "Pres: %s",
+                    "status.sens_fmt": "Sens: %s"
+                }
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "$defs": {
+        "keyNamingNote": {
+            "description": "Keys use dot-separated namespaces. Defined namespaces: 'ui.*' for shared UI chrome (back, enter, save, stop); 'menu.*' for menu item labels; 'toast.*' for toast notifications; 'config.*' for config field labels; 'status.*' for device status strings. New namespaces may be added by firmware without a schema version bump — the firmware's i18n-catalog.json build artifact is the authoritative key list for a given firmware version."
+        }
+    }
+}
