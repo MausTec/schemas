@@ -9,7 +9,8 @@ Schemas are published at `https://schemas.maus-tec.com/` via GitHub Pages.
 |--------|-----|-------------|
 | EOM Package Common Definitions (v1.0.0) | `https://schemas.maus-tec.com/package/v1.0.0/common.json` | Shared definitions (Hub metadata, permissions, config schema) for all EOM artifact manifests |
 | EOM Plugin Manifest (v1.0.0) | `https://schemas.maus-tec.com/mt-actions/v1.0.0/plugin.json` | Validates `plugin.json` files for Edge-o-Matic 3000 JSON plugins |
-| EOM Plugin API Descriptor (v1.0.0) | `https://schemas.maus-tec.com/plugin-api/v1.0.0/plugin-api.json` | Validates firmware-generated `plugin-api.json` and SDK overlay files |
+| Plugin API Descriptor (v1.0.0) | `https://schemas.maus-tec.com/plugin-api/v1.0.0/plugin-api.json` | Validates firmware-generated `plugin-api.json` — **legacy** (`product` field) |
+| Plugin API Descriptor (v1.1.0) | `https://schemas.maus-tec.com/plugin-api/v1.1.0/plugin-api.json` | Validates firmware-generated `plugin-api.json` and SDK overlays (`sku` field, structured comments) |
 
 ## Usage
 
