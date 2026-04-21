@@ -4,7 +4,7 @@
     "title": "MT-Actions Plugin",
     "description": "JSON-based scripting language for embedded device drivers and plugins. Hub metadata fields (name, version, author, etc.) are optional for device-side validation but required for Hub distribution.",
     "type": "object",
-    "required": [ "displayName", "type" ],
+    "required": [ "display_name", "type" ],
     "properties": {
         "$schema": {
             "type": "string",
@@ -21,12 +21,12 @@
             "description": "Plugin version in semver format.",
             "pattern": "^\\d+\\.\\d+\\.\\d+"
         },
-        "sdkVersion": {
+        "sdk_version": {
             "type": "string",
             "description": "Minimum eom-sdk version required.",
             "pattern": "^\\d+\\.\\d+\\.\\d+"
         },
-        "displayName": {
+        "display_name": {
             "type": "string",
             "description": "Human-readable name for menus and Hub listing"
         },
@@ -105,11 +105,11 @@
                     "type": [ "integer", "null" ],
                     "description": "Device Serial Number (optional)"
                 },
-                "bleNamePrefix": {
+                "ble_name_prefix": {
                     "type": "string",
                     "description": "BLE advertised name prefix (e.g. 'LVS-')"
                 },
-                "bleName": {
+                "ble_name": {
                     "type": "string",
                     "description": "Exact BLE advertised name"
                 }
